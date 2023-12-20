@@ -15,7 +15,7 @@ class Luminance extends StatefulWidget {
 
 class _LuminanceState extends State<Luminance> {
   // Put your unsplash access token here
-  String accessToken = "bSmQIYWpH9Gw1mv40M69gCFLeeCPQr2jwV4700p7mk4";
+  String accessToken = "";
 
   Future<List> fetchImages(String query) async {
     var url = Uri.https('api.unsplash.com', '/photos/random', {

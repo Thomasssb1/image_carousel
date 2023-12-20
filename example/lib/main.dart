@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:title_carousel/title_carousel.dart';
-import 'package:http/http.dart' as http;
 import 'package:go_router/go_router.dart';
 import 'non_luminance.dart';
 import 'luminance.dart';
