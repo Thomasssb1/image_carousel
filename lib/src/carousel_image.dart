@@ -66,7 +66,6 @@ class CarouselImage extends StatelessWidget {
         }
       }
     }
-    print(luminanceTotal / (textArea["height"]! * textArea["width"]!));
     _useLightColour =
         (luminanceTotal / (textArea["height"]! * textArea["width"]!) <
             threshold);

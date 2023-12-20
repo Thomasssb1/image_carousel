@@ -46,7 +46,7 @@ class TitleCarousel extends StatefulWidget {
         super(key: key);
 
   @override
-  _ImageCarouselState createState() => _ImageCarouselState(
+  State<TitleCarousel> createState() => _TitleCarouselState(
       images: images,
       indicatorWidth: indicatorWidth!,
       duration: duration!,
@@ -56,7 +56,7 @@ class TitleCarousel extends StatefulWidget {
       indicatorPadding: indicatorPadding!);
 }
 
-class _ImageCarouselState extends State<TitleCarousel> {
+class _TitleCarouselState extends State<TitleCarousel> {
   late List<CarouselImage> images;
   late double indicatorWidth;
   late Duration duration;
@@ -71,7 +71,7 @@ class _ImageCarouselState extends State<TitleCarousel> {
   bool _paused = false;
   List<_Indicator> _dots = [];
 
-  _ImageCarouselState(
+  _TitleCarouselState(
       {required this.images,
       required this.indicatorWidth,
       required this.duration,
@@ -88,23 +88,29 @@ class _ImageCarouselState extends State<TitleCarousel> {
   }
 
   void _changeImage() {
-    setState(() {
-      _dots[_currentImage].setSelected(false);
-      _currentImage = (_currentImage + 1) % images.length;
-      _dots[_currentImage].setSelected(true);
-    });
+    if (mounted) {
+      setState(() {
+        _dots[_currentImage].setSelected(false);
+        _currentImage = (_currentImage + 1) % images.length;
+        _dots[_currentImage].setSelected(true);
+      });
+    } else {
+      pause();
+    }
   }
 
   void pause() {
-    setState(() {
-      _paused = true;
-    });
+    _paused = true;
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   void play() {
-    setState(() {
-      _paused = false;
-    });
+    _paused = false;
+    if (mounted) {
+      setState(() {});
+    }
     _schedule();
   }
 
@@ -115,7 +121,6 @@ class _ImageCarouselState extends State<TitleCarousel> {
   }
 
   Timer _schedule() => Timer.periodic(duration, (timer) {
-        print("timer: ${timer.tick}");
         if (_paused) {
           timer.cancel();
         } else {
@@ -123,23 +128,21 @@ class _ImageCarouselState extends State<TitleCarousel> {
         }
       });
 
-  /*void _setLuminance() async {
+  void _setLuminance() async {
     for (int i = 0; i < images.length; i++) {
       if (images[i].titleOverlay != null &&
-          images[i].titleOverlay!.computeLuminance!)
-        print("set luminance: ${images[i].key}");
-      await images[i].setLuminance(threshold).then((value) {
-        setState(() {});
-      });
+          images[i].titleOverlay!.computeLuminance!) {
+        images[i].setLuminance(threshold);
+      }
     }
-  }*/
+  }
 
   @override
   void initState() {
     super.initState();
     _generateDots();
     _schedule();
-    //_setLuminance();
+    _setLuminance();
   }
 
   @override
@@ -174,8 +177,6 @@ class _Indicator {
   late Color _selectedColour;
 
   void setSelected(bool selected) {
-    print(
-        "selected: $selected, colour: ${_selectedColour}, ${_unselectedColour}, ${_dot.color}");
     _dot = _dot.copyWith(color: selected ? _selectedColour : _unselectedColour);
   }
 
