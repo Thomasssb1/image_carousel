@@ -1,64 +1,65 @@
 import 'package:flutter/material.dart';
 import 'package:title_carousel/title_carousel.dart';
+import 'package:http/http.dart' as http;
+import 'package:go_router/go_router.dart';
+import 'non_luminance.dart';
+import 'luminance.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
+final router = GoRouter(initialLocation: "/", routes: [
+  GoRoute(path: "/", builder: (context, state) => const Home()),
+  GoRoute(
+      path: "/non_luminance",
+      builder: (context, state) => const NonLuminance()),
+  GoRoute(
+    path: "/luminance",
+    builder: (context, state) => const Luminance(),
+  )
+]);
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+  Widget build(BuildContext context) {
+    return MaterialApp.router(
+      routerConfig: router,
+    );
+  }
+}
 
-  TextProperties baseText(String text, bool isTitle) => TextProperties(text,
-      computeLuminance: true,
-      brightColor: const Color.fromARGB(255, 195, 195, 195),
-      darkColor: const Color.fromARGB(255, 64, 64, 64),
-      fontWeight: FontWeight.bold,
-      fontSize: isTitle ? 48 : 20,
-      height: 1,
-      textPadding: const EdgeInsets.only(bottom: 500),
-      textAlign: TextAlign.center);
-
-  CarouselImage baseImage(
-          String link, TextProperties title, TextProperties description) =>
-      CarouselImage(
-        link,
-        fit: BoxFit.fitHeight,
-        titleOverlay: title,
-        childrenTextOverlay: [description],
-      );
-
-  final List<Map> images = const [
-    {
-      "name": "Swan",
-      "src": "https://source.unsplash.com/b027q9eF3Yo.jpeg",
-      "description": "\nAn elegant swan simming in the lake"
-    },
-    {
-      "name": "Robin",
-      "src": "https://source.unsplash.com/6L-b2EmQ4gk.jpeg",
-      "description": "\nA robin standing in the snow"
-    },
-    {
-      "name": "Pelican",
-      "src": "https://source.unsplash.com/1g87nfXZchU.jpeg",
-      "description": "\nA pelican staning next to a tree"
-    }
-  ];
-
+class Home extends StatelessWidget {
+  const Home({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        home: Scaffold(
-            body: SafeArea(
-                child: TitleCarousel(
-      images: List.generate(
-          images.length,
-          (index) => baseImage(
-                images[index]["src"],
-                baseText(images[index]["name"], true),
-                baseText(images[index]["description"], false),
-              )),
-      threshold: 0.25,
-    ))));
+    return Scaffold(
+        body: Center(
+            child: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        InkWell(
+            onTap: () {
+              context.push("/non_luminance");
+            },
+            child: Ink(
+                child: Container(
+                    padding: EdgeInsets.all(30),
+                    color: Colors.blueAccent,
+                    child: Text("Non Luminance example",
+                        style: TextStyle(fontSize: 20))))),
+        InkWell(
+            onTap: () {
+              context.push("/luminance");
+            },
+            child: Ink(
+                child: Container(
+                    padding: EdgeInsets.all(30),
+                    color: Colors.blueAccent,
+                    child: Text("Luminance example",
+                        style: TextStyle(fontSize: 20)))))
+      ],
+    )));
   }
 }
