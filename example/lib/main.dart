@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:image_carousel/image_carousel.dart';
+import 'package:title_carousel/title_carousel.dart';
 
 void main() {
   runApp(const MyApp());
@@ -52,7 +52,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         home: Scaffold(
             body: SafeArea(
-                child: ImageCarousel(
+                child: TitleCarousel(
       images: List.generate(
           images.length,
           (index) => baseImage(

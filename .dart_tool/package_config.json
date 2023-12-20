@@ -488,13 +488,13 @@
       "languageVersion": "2.19"
     },
     {
-      "name": "image_carousel",
+      "name": "title_carousel",
       "rootUri": "../",
       "packageUri": "lib/",
       "languageVersion": "2.19"
     }
   ],
-  "generated": "2023-12-20T00:15:53.895184Z",
+  "generated": "2023-12-20T01:58:58.544540Z",
   "generator": "pub",
   "generatorVersion": "3.2.3"
 }

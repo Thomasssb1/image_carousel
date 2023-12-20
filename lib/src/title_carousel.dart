@@ -4,7 +4,7 @@ import 'dart:math';
 import 'indicator.dart';
 import 'carousel_image.dart';
 
-class ImageCarousel extends StatefulWidget {
+class TitleCarousel extends StatefulWidget {
   final List<CarouselImage> images;
   final double? width;
   final Duration? duration;
@@ -13,7 +13,7 @@ class ImageCarousel extends StatefulWidget {
   final Widget? placeholder;
   final double threshold;
 
-  ImageCarousel(
+  TitleCarousel(
       {Key? key,
       required this.images,
       this.width = 300,
@@ -33,7 +33,7 @@ class ImageCarousel extends StatefulWidget {
   _ImageCarouselState createState() => _ImageCarouselState();
 }
 
-class _ImageCarouselState extends State<ImageCarousel> {
+class _ImageCarouselState extends State<TitleCarousel> {
   late List<CarouselImage> images;
   late double width;
   late Duration duration;
