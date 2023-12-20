@@ -11,7 +11,7 @@ class ImageCarousel extends StatefulWidget {
   final BoxDecoration dDecoration;
   final Color selectedColor;
   final Widget? placeholder;
-  final Color textColor;
+  final double threshold;
 
   ImageCarousel(
       {Key? key,
@@ -19,9 +19,9 @@ class ImageCarousel extends StatefulWidget {
       this.width = 300,
       this.duration = const Duration(seconds: 3),
       BoxDecoration? dotDecoration,
-      this.selectedColor = Colors.black,
+      this.selectedColor = Colors.red,
       this.placeholder,
-      this.textColor = Colors.black})
+      this.threshold = 0.3})
       : dDecoration = dotDecoration ??
             BoxDecoration(
                 color: Colors.white,
@@ -41,15 +41,18 @@ class _ImageCarouselState extends State<ImageCarousel> {
   late Color selectedColor;
   late Widget? placeholder;
   late Color textColor;
+  late double threshold;
 
   int _currentImage = 0;
   final double _gap = 10;
   bool _paused = false;
-  late final List<Indicator> _dots;
+  List<Indicator> _dots = [];
 
   void _generateDots() {
-    _dots = List.filled(images.length,
-        Indicator(selectedColour: selectedColor, dot: dDecoration));
+    for (int i = 0; i < images.length; i++) {
+      _dots.add(Indicator(selectedColour: selectedColor, dot: dDecoration));
+      if (i == 0) _dots[0].setSelected(true);
+    }
   }
 
   void _setAttributes() {
@@ -59,6 +62,7 @@ class _ImageCarouselState extends State<ImageCarousel> {
     dDecoration = widget.dDecoration;
     selectedColor = widget.selectedColor;
     placeholder = widget.placeholder;
+    threshold = widget.threshold;
   }
 
   void _changeImage() {
@@ -99,11 +103,11 @@ class _ImageCarouselState extends State<ImageCarousel> {
   void _setLuminance() {
     for (int i = 0; i < images.length; i++) {
       if (images[i].titleOverlay != null &&
-          images[i].titleOverlay!.computeLuminance!)
-        images[i].calculateLuminance();
+          images[i].titleOverlay!.computeLuminance!) images[i].setLuminance();
     }
   }
 
+  @override
   void initState() {
     super.initState();
     _setAttributes();
@@ -123,10 +127,11 @@ class _ImageCarouselState extends State<ImageCarousel> {
               child: Padding(
                   padding: EdgeInsets.only(bottom: 200),
                   child: Row(
-                      children: List.generate(images.length, (index) {
-                    return AnimatedContainer(
+                      children: List.generate(_dots.length, (index) {
+                    print("color: ${_dots[index].getDot().color}");
+                    return Container(
                         margin: EdgeInsets.only(left: (index > 0) ? _gap : 0),
-                        duration: duration,
+                        //duration: duration,
                         decoration: _dots[index].getDot(),
                         width: (width - ((images.length - 1) * _gap)) /
                             images.length,

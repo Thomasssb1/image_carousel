@@ -14,7 +14,7 @@ class CarouselImage extends StatelessWidget {
   final List<TextProperties> _childrenTextOverlay;
   final double threshold;
 
-  late final bool useLightColour;
+  bool _useLightColour = false;
 
   CarouselImage(
       {Key? key,
@@ -29,7 +29,7 @@ class CarouselImage extends StatelessWidget {
         _childrenTextOverlay = childrenTextOverlay ?? [],
         super(key: key);
 
-  void calculateLuminance() async {
+  void setLuminance() async {
     final tp =
         TextPainter(text: generateText(), textDirection: TextDirection.ltr);
     tp.layout();
@@ -53,39 +53,42 @@ class CarouselImage extends StatelessWidget {
         }
       }
     }
-    useLightColour =
+    print(luminanceTotal / (textArea["height"]! * textArea["width"]!));
+    _useLightColour =
         (luminanceTotal / (textArea["height"]! * textArea["width"]!) <
             threshold);
   }
 
-  TextSpan generateText() => TextSpan(
-      text: titleOverlay!.title,
-      style: TextStyle(
-        fontSize: titleOverlay!.fontSize,
-        fontWeight: titleOverlay!.fontWeight,
-        letterSpacing: titleOverlay!.letterSpacing,
-        color: titleOverlay!.computeLuminance ?? false
-            ? (useLightColour
-                ? titleOverlay!.brightColor
-                : titleOverlay!.darkColor)
-            : titleOverlay!.color,
-        height: titleOverlay!.height,
-      ),
-      children: List.generate(
-          _childrenTextOverlay.length,
-          (index) => TextSpan(
-              text: _childrenTextOverlay[index].title,
-              style: TextStyle(
-                fontSize: _childrenTextOverlay[index].fontSize,
-                fontWeight: _childrenTextOverlay[index].fontWeight,
-                letterSpacing: _childrenTextOverlay[index].letterSpacing,
-                color: _childrenTextOverlay[index].computeLuminance ?? false
-                    ? (useLightColour
-                        ? _childrenTextOverlay[index].brightColor
-                        : _childrenTextOverlay[index].darkColor)
-                    : _childrenTextOverlay[index].color,
-                height: _childrenTextOverlay[index].height,
-              ))));
+  TextSpan generateText() {
+    return TextSpan(
+        text: titleOverlay!.title,
+        style: TextStyle(
+          fontSize: titleOverlay!.fontSize,
+          fontWeight: titleOverlay!.fontWeight,
+          letterSpacing: titleOverlay!.letterSpacing,
+          color: titleOverlay!.computeLuminance ?? false
+              ? ((_useLightColour)
+                  ? titleOverlay!.brightColor
+                  : titleOverlay!.darkColor)
+              : titleOverlay!.color,
+          height: titleOverlay!.height,
+        ),
+        children: List.generate(
+            _childrenTextOverlay.length,
+            (index) => TextSpan(
+                text: _childrenTextOverlay[index].title,
+                style: TextStyle(
+                  fontSize: _childrenTextOverlay[index].fontSize,
+                  fontWeight: _childrenTextOverlay[index].fontWeight,
+                  letterSpacing: _childrenTextOverlay[index].letterSpacing,
+                  color: _childrenTextOverlay[index].computeLuminance ?? false
+                      ? ((_useLightColour)
+                          ? _childrenTextOverlay[index].brightColor
+                          : _childrenTextOverlay[index].darkColor)
+                      : _childrenTextOverlay[index].color,
+                  height: _childrenTextOverlay[index].height,
+                ))));
+  }
 
   List<TextProperties> getChildrenTextOverlay() => _childrenTextOverlay;
 
