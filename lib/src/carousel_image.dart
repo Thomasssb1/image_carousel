@@ -5,20 +5,34 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:image/image.dart' as img;
 
+/// The image and text content to be displayed within the [TitleCarousel]
 // ignore: must_be_immutable
 class CarouselImage extends StatelessWidget {
+  /// The image to be displayed, this can be a network image or an asset image.
   final String image;
+
+  /// The placeholder widget to be displayed whilst the network image is loading
   final Widget _placeholder;
+
+  /// The fit of the image within the container
   final BoxFit? fit;
+
+  /// Whether the image is a network image or an asset image
   final bool networkImage;
+
+  /// The title overlay properties
   final TextProperties? titleOverlay;
+
+  /// The children text overlay properties
   final List<TextProperties> _childrenTextOverlay;
 
+  // determines whether to use the light or dark colour
   bool _useLightColour = false;
 
-  CarouselImage({
+  /// The image and text content to be displayed within the [TitleCarousel]
+  CarouselImage(
+    this.image, {
     Key? key,
-    required this.image,
     Widget? placeholder,
     this.fit,
     this.networkImage = true,
@@ -60,7 +74,7 @@ class CarouselImage extends StatelessWidget {
 
   TextSpan generateText() {
     return TextSpan(
-        text: titleOverlay!.title,
+        text: titleOverlay!.text,
         style: TextStyle(
           fontSize: titleOverlay!.fontSize,
           fontWeight: titleOverlay!.fontWeight,
@@ -75,7 +89,7 @@ class CarouselImage extends StatelessWidget {
         children: List.generate(
             _childrenTextOverlay.length,
             (index) => TextSpan(
-                text: _childrenTextOverlay[index].title,
+                text: _childrenTextOverlay[index].text,
                 style: TextStyle(
                   fontSize: _childrenTextOverlay[index].fontSize,
                   fontWeight: _childrenTextOverlay[index].fontWeight,

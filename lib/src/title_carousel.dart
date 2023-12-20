@@ -3,27 +3,42 @@ import 'dart:async';
 import 'dart:math';
 import 'carousel_image.dart';
 
+/// The carousel widget which displays multiple [CarouselImage] widgets
 class TitleCarousel extends StatefulWidget {
+  /// The list of [CarouselImage] widgets to display
   final List<CarouselImage> images;
-  final double? width;
+
+  /// The width of the indicator section
+  final double? indicatorWidth;
+
+  /// The duration that each image is displayed
   final Duration? duration;
-  final BoxDecoration dDecoration;
+
+  /// The decoration of the indicator dots
+  final BoxDecoration? dotDecoration;
+
+  /// The color of the selected indicator dot
   final Color selectedColor;
-  final Widget? placeholder;
+
+  /// The threshold for the luminance of the image to determine the color of the text overlay
+  ///
+  /// If the luminance is greater than the threshold, the text overlay will be dark
   final double threshold;
+
+  /// The padding of the indicator section
   final EdgeInsets? indicatorPadding;
 
+  /// The carousel widget which displays multiple [CarouselImage] widgets
   TitleCarousel(
       {Key? key,
       required this.images,
-      this.width = 300,
+      this.indicatorWidth = 300,
       this.duration = const Duration(seconds: 3),
       BoxDecoration? dotDecoration,
       this.selectedColor = Colors.red,
-      this.placeholder,
       this.threshold = 0.3,
-      this.indicatorPadding = const EdgeInsets.only(bottom: 200)})
-      : dDecoration = dotDecoration ??
+      this.indicatorPadding = const EdgeInsets.only(bottom: 100)})
+      : dotDecoration = dotDecoration ??
             BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(2 * pi),
@@ -33,22 +48,20 @@ class TitleCarousel extends StatefulWidget {
   @override
   _ImageCarouselState createState() => _ImageCarouselState(
       images: images,
-      width: width!,
+      indicatorWidth: indicatorWidth!,
       duration: duration!,
-      dDecoration: dDecoration,
+      dDecoration: dotDecoration!,
       selectedColor: selectedColor,
-      placeholder: placeholder,
       threshold: threshold,
       indicatorPadding: indicatorPadding!);
 }
 
 class _ImageCarouselState extends State<TitleCarousel> {
   late List<CarouselImage> images;
-  late double width;
+  late double indicatorWidth;
   late Duration duration;
   late BoxDecoration dDecoration;
   late Color selectedColor;
-  late Widget? placeholder;
   late Color textColor;
   late double threshold;
   late EdgeInsets indicatorPadding;
@@ -60,11 +73,10 @@ class _ImageCarouselState extends State<TitleCarousel> {
 
   _ImageCarouselState(
       {required this.images,
-      required this.width,
+      required this.indicatorWidth,
       required this.duration,
       required this.dDecoration,
       required this.selectedColor,
-      required this.placeholder,
       required this.threshold,
       required this.indicatorPadding});
 
@@ -137,7 +149,7 @@ class _ImageCarouselState extends State<TitleCarousel> {
       Align(
           alignment: Alignment.bottomCenter,
           child: Container(
-              width: width,
+              width: indicatorWidth,
               child: Padding(
                   padding: indicatorPadding,
                   child: Row(
@@ -146,7 +158,7 @@ class _ImageCarouselState extends State<TitleCarousel> {
                       margin: EdgeInsets.only(left: (index > 0) ? _gap : 0),
                       duration: duration,
                       decoration: _dots[index].getDot(),
-                      width: ((width - ((images.length - 1) * _gap)) /
+                      width: ((indicatorWidth - ((images.length - 1) * _gap)) /
                               (images.length + 0.5)) *
                           ((index == _currentImage) ? 1.5 : 1),
                       height: 10,

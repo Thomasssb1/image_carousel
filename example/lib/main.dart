@@ -8,21 +8,20 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  TextProperties baseText(String text, bool isTitle) => TextProperties(
-      title: text,
+  TextProperties baseText(String text, bool isTitle) => TextProperties(text,
       computeLuminance: true,
       brightColor: const Color.fromARGB(255, 195, 195, 195),
       darkColor: const Color.fromARGB(255, 64, 64, 64),
       fontWeight: FontWeight.bold,
       fontSize: isTitle ? 48 : 20,
       height: 1,
-      textPadding: EdgeInsets.only(bottom: 500),
+      textPadding: const EdgeInsets.only(bottom: 500),
       textAlign: TextAlign.center);
 
   CarouselImage baseImage(
           String link, TextProperties title, TextProperties description) =>
       CarouselImage(
-        image: link,
+        link,
         fit: BoxFit.fitHeight,
         titleOverlay: title,
         childrenTextOverlay: [description],
@@ -60,7 +59,6 @@ class MyApp extends StatelessWidget {
                 baseText(images[index]["description"], false),
               )),
       threshold: 0.25,
-      indicatorPadding: const EdgeInsets.only(bottom: 100),
     ))));
   }
 }
