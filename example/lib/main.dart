@@ -26,7 +26,6 @@ class MyApp extends StatelessWidget {
         fit: BoxFit.fitHeight,
         titleOverlay: title,
         childrenTextOverlay: [description],
-        threshold: 0.25,
       );
 
   final List<Map> images = const [
@@ -60,6 +59,8 @@ class MyApp extends StatelessWidget {
                 baseText(images[index]["name"], true),
                 baseText(images[index]["description"], false),
               )),
+      threshold: 0.25,
+      indicatorPadding: const EdgeInsets.only(bottom: 100),
     ))));
   }
 }

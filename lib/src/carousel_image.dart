@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:image/image.dart' as img;
 
+// ignore: must_be_immutable
 class CarouselImage extends StatelessWidget {
   final String image;
   final Widget _placeholder;
@@ -12,24 +13,22 @@ class CarouselImage extends StatelessWidget {
   final bool networkImage;
   final TextProperties? titleOverlay;
   final List<TextProperties> _childrenTextOverlay;
-  final double threshold;
 
   bool _useLightColour = false;
 
-  CarouselImage(
-      {Key? key,
-      required this.image,
-      Widget? placeholder,
-      this.fit,
-      this.networkImage = true,
-      this.titleOverlay,
-      List<TextProperties>? childrenTextOverlay,
-      this.threshold = 0.3})
-      : _placeholder = placeholder ?? Container(color: Colors.black),
+  CarouselImage({
+    Key? key,
+    required this.image,
+    Widget? placeholder,
+    this.fit,
+    this.networkImage = true,
+    this.titleOverlay,
+    List<TextProperties>? childrenTextOverlay,
+  })  : _placeholder = placeholder ?? Container(color: Colors.black),
         _childrenTextOverlay = childrenTextOverlay ?? [],
         super(key: key);
 
-  void setLuminance() async {
+  void setLuminance(double threshold) async {
     final tp =
         TextPainter(text: generateText(), textDirection: TextDirection.ltr);
     tp.layout();

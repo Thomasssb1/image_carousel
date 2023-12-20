@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:math';
-import 'indicator.dart';
 import 'carousel_image.dart';
 
 class TitleCarousel extends StatefulWidget {
@@ -12,6 +11,7 @@ class TitleCarousel extends StatefulWidget {
   final Color selectedColor;
   final Widget? placeholder;
   final double threshold;
+  final EdgeInsets? indicatorPadding;
 
   TitleCarousel(
       {Key? key,
@@ -21,7 +21,8 @@ class TitleCarousel extends StatefulWidget {
       BoxDecoration? dotDecoration,
       this.selectedColor = Colors.red,
       this.placeholder,
-      this.threshold = 0.3})
+      this.threshold = 0.3,
+      this.indicatorPadding = const EdgeInsets.only(bottom: 200)})
       : dDecoration = dotDecoration ??
             BoxDecoration(
                 color: Colors.white,
@@ -30,7 +31,15 @@ class TitleCarousel extends StatefulWidget {
         super(key: key);
 
   @override
-  _ImageCarouselState createState() => _ImageCarouselState();
+  _ImageCarouselState createState() => _ImageCarouselState(
+      images: images,
+      width: width!,
+      duration: duration!,
+      dDecoration: dDecoration,
+      selectedColor: selectedColor,
+      placeholder: placeholder,
+      threshold: threshold,
+      indicatorPadding: indicatorPadding!);
 }
 
 class _ImageCarouselState extends State<TitleCarousel> {
@@ -42,27 +51,28 @@ class _ImageCarouselState extends State<TitleCarousel> {
   late Widget? placeholder;
   late Color textColor;
   late double threshold;
+  late EdgeInsets indicatorPadding;
 
   int _currentImage = 0;
   final double _gap = 10;
   bool _paused = false;
-  List<Indicator> _dots = [];
+  List<_Indicator> _dots = [];
+
+  _ImageCarouselState(
+      {required this.images,
+      required this.width,
+      required this.duration,
+      required this.dDecoration,
+      required this.selectedColor,
+      required this.placeholder,
+      required this.threshold,
+      required this.indicatorPadding});
 
   void _generateDots() {
     for (int i = 0; i < images.length; i++) {
-      _dots.add(Indicator(selectedColour: selectedColor, dot: dDecoration));
+      _dots.add(_Indicator(selectedColour: selectedColor, dot: dDecoration));
       if (i == 0) _dots[0].setSelected(true);
     }
-  }
-
-  void _setAttributes() {
-    images = widget.images;
-    width = widget.width!;
-    duration = widget.duration!;
-    dDecoration = widget.dDecoration;
-    selectedColor = widget.selectedColor;
-    placeholder = widget.placeholder;
-    threshold = widget.threshold;
   }
 
   void _changeImage() {
@@ -93,6 +103,7 @@ class _ImageCarouselState extends State<TitleCarousel> {
   }
 
   Timer _schedule() => Timer.periodic(duration, (timer) {
+        print("timer: ${timer.tick}");
         if (_paused) {
           timer.cancel();
         } else {
@@ -100,20 +111,23 @@ class _ImageCarouselState extends State<TitleCarousel> {
         }
       });
 
-  void _setLuminance() {
+  /*void _setLuminance() async {
     for (int i = 0; i < images.length; i++) {
       if (images[i].titleOverlay != null &&
-          images[i].titleOverlay!.computeLuminance!) images[i].setLuminance();
+          images[i].titleOverlay!.computeLuminance!)
+        print("set luminance: ${images[i].key}");
+      await images[i].setLuminance(threshold).then((value) {
+        setState(() {});
+      });
     }
-  }
+  }*/
 
   @override
   void initState() {
     super.initState();
-    _setAttributes();
     _generateDots();
     _schedule();
-    _setLuminance();
+    //_setLuminance();
   }
 
   @override
@@ -125,18 +139,39 @@ class _ImageCarouselState extends State<TitleCarousel> {
           child: Container(
               width: width,
               child: Padding(
-                  padding: EdgeInsets.only(bottom: 200),
+                  padding: indicatorPadding,
                   child: Row(
                       children: List.generate(_dots.length, (index) {
-                    print("color: ${_dots[index].getDot().color}");
-                    return Container(
-                        margin: EdgeInsets.only(left: (index > 0) ? _gap : 0),
-                        //duration: duration,
-                        decoration: _dots[index].getDot(),
-                        width: (width - ((images.length - 1) * _gap)) /
-                            images.length,
-                        height: 10);
+                    return AnimatedContainer(
+                      margin: EdgeInsets.only(left: (index > 0) ? _gap : 0),
+                      duration: duration,
+                      decoration: _dots[index].getDot(),
+                      width: ((width - ((images.length - 1) * _gap)) /
+                              (images.length + 0.5)) *
+                          ((index == _currentImage) ? 1.5 : 1),
+                      height: 10,
+                    );
                   })))))
     ]);
+  }
+}
+
+class _Indicator {
+  late BoxDecoration _dot;
+  late Color _unselectedColour;
+  late Color _selectedColour;
+
+  void setSelected(bool selected) {
+    print(
+        "selected: $selected, colour: ${_selectedColour}, ${_unselectedColour}, ${_dot.color}");
+    _dot = _dot.copyWith(color: selected ? _selectedColour : _unselectedColour);
+  }
+
+  BoxDecoration getDot() => _dot;
+
+  _Indicator({required Color selectedColour, required BoxDecoration dot}) {
+    _selectedColour = selectedColour;
+    _unselectedColour = dot.color!;
+    _dot = dot;
   }
 }
