@@ -1,5 +1,6 @@
-import '../src/title_properties.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+
+import '../src/title_properties.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
@@ -17,9 +18,6 @@ class CarouselImage extends StatelessWidget {
   /// The fit of the image within the container
   final BoxFit? fit;
 
-  /// Whether the image is a network image or an asset image
-  final bool networkImage;
-
   /// The title overlay properties
   final TextProperties? titleOverlay;
 
@@ -35,7 +33,6 @@ class CarouselImage extends StatelessWidget {
     Key? key,
     Widget? placeholder,
     this.fit,
-    this.networkImage = true,
     this.titleOverlay,
     List<TextProperties>? childrenTextOverlay,
   })  : _placeholder = placeholder ?? Container(color: Colors.black),
@@ -51,7 +48,7 @@ class CarouselImage extends StatelessWidget {
       "height": tp.height.ceil()
     };
 
-    final Uint8List response = (networkImage)
+    final Uint8List response = (isNetworkImage())
         ? (await http.get(Uri.parse(image))).bodyBytes
         : (await rootBundle.load(image)).buffer.asUint8List();
 
@@ -104,18 +101,31 @@ class CarouselImage extends StatelessWidget {
 
   List<TextProperties> getChildrenTextOverlay() => _childrenTextOverlay;
 
+  bool isNetworkImage() {
+    return Uri.parse(image).isScheme('HTTP') ||
+        Uri.parse(image).isScheme('HTTPS');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(alignment: Alignment.center, children: [
-      networkImage
+      isNetworkImage()
           ? CachedNetworkImage(
               imageUrl: image,
-              fit: fit,
-              height: double.infinity,
-              placeholder: (context, url) {
-                return _placeholder;
-              })
-          : Image.asset(image, fit: fit, height: double.infinity),
+              imageBuilder: (context, imageProvider) => Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: imageProvider,
+                    fit: fit,
+                  ),
+                ),
+              ),
+              placeholder: (context, url) => _placeholder,
+              errorWidget: (context, url, error) => _placeholder,
+            )
+          : Container(
+              foregroundDecoration: BoxDecoration(
+                  image: DecorationImage(fit: fit, image: AssetImage(image)))),
       if (titleOverlay != null)
         Padding(
             padding: titleOverlay?.textPadding ?? EdgeInsets.zero,

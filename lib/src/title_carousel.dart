@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:title_carousel/src/carousel_animation.dart';
 import 'dart:async';
 import 'dart:math';
 import 'carousel_image.dart';
@@ -20,6 +21,12 @@ class TitleCarousel extends StatefulWidget {
   /// The color of the selected indicator dot
   final Color selectedColor;
 
+  /// The animation to be used when swapping between [CarouselImage] widgets
+  final CarouselAnimation? animation;
+
+  /// The curve to be used in the [animation]
+  final Curve? animationCurve;
+
   /// The threshold for the luminance of the image to determine the color of the text overlay
   ///
   /// If the luminance is greater than the threshold, the text overlay will be dark
@@ -35,6 +42,8 @@ class TitleCarousel extends StatefulWidget {
       this.indicatorWidth = 300,
       this.duration = const Duration(seconds: 3),
       BoxDecoration? dotDecoration,
+      this.animation = CarouselAnimation.fade,
+      this.animationCurve = Curves.linear,
       this.selectedColor = Colors.red,
       this.threshold = 0.3,
       this.indicatorPadding = const EdgeInsets.only(bottom: 100)})
@@ -51,6 +60,8 @@ class TitleCarousel extends StatefulWidget {
       indicatorWidth: indicatorWidth!,
       duration: duration!,
       dDecoration: dotDecoration!,
+      animation: animation!,
+      animationCurve: animationCurve!,
       selectedColor: selectedColor,
       threshold: threshold,
       indicatorPadding: indicatorPadding!);
@@ -60,6 +71,9 @@ class _TitleCarouselState extends State<TitleCarousel> {
   late List<CarouselImage> images;
   late double indicatorWidth;
   late Duration duration;
+  final double _animationDurationMultiplier = 1 / 3;
+  late CarouselAnimation animation;
+  late Curve animationCurve;
   late BoxDecoration dDecoration;
   late Color selectedColor;
   late Color textColor;
@@ -76,6 +90,8 @@ class _TitleCarouselState extends State<TitleCarousel> {
       required this.indicatorWidth,
       required this.duration,
       required this.dDecoration,
+      required this.animation,
+      required this.animationCurve,
       required this.selectedColor,
       required this.threshold,
       required this.indicatorPadding});
@@ -137,6 +153,12 @@ class _TitleCarouselState extends State<TitleCarousel> {
     }
   }
 
+  bool noReverse() =>
+      animation == CarouselAnimation.slide ||
+      animation == CarouselAnimation.size ||
+      animation == CarouselAnimation.scale ||
+      animation == CarouselAnimation.rotate;
+
   @override
   void initState() {
     super.initState();
@@ -148,7 +170,53 @@ class _TitleCarouselState extends State<TitleCarousel> {
   @override
   Widget build(BuildContext context) {
     return Stack(alignment: Alignment.center, children: [
-      images[_currentImage],
+      AnimatedSwitcher(
+        duration: duration * _animationDurationMultiplier,
+        // prevent the animation from playing backwards
+        reverseDuration: noReverse() ? duration * 2 : null,
+        switchOutCurve: noReverse() ? Curves.easeOutExpo : animationCurve,
+        switchInCurve: animationCurve,
+        transitionBuilder: (Widget child, Animation<double> widgetAnimation) {
+          switch (animation) {
+            case CarouselAnimation.fade:
+              return FadeTransition(
+                opacity: widgetAnimation,
+                child: child,
+              );
+            case CarouselAnimation.slide:
+              return SlideTransition(
+                position:
+                    Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
+                        .animate(CurvedAnimation(
+                            parent: widgetAnimation,
+                            curve: Curves.easeOutCirc)),
+                child: child,
+              );
+            case CarouselAnimation.size:
+              return SizeTransition(
+                sizeFactor: widgetAnimation,
+                child: child,
+              );
+            case CarouselAnimation.scale:
+              return ScaleTransition(
+                scale: widgetAnimation,
+                child: child,
+              );
+            case CarouselAnimation.rotate:
+              return RotationTransition(
+                turns: widgetAnimation,
+                child: ScaleTransition(
+                  scale: widgetAnimation,
+                  child: child,
+                ),
+              );
+            default:
+              return child;
+          }
+        },
+        child: SizedBox(
+            key: ValueKey<int>(_currentImage), child: images[_currentImage]),
+      ),
       Align(
           alignment: Alignment.bottomCenter,
           child: Container(
@@ -159,7 +227,7 @@ class _TitleCarouselState extends State<TitleCarousel> {
                       children: List.generate(_dots.length, (index) {
                     return AnimatedContainer(
                       margin: EdgeInsets.only(left: (index > 0) ? _gap : 0),
-                      duration: duration,
+                      duration: duration * _animationDurationMultiplier,
                       decoration: _dots[index].getDot(),
                       width: ((indicatorWidth - ((images.length - 1) * _gap)) /
                               (images.length + 0.5)) *
