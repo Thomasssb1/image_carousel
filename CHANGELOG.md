@@ -16,3 +16,7 @@
 ## 1.1.2
 
 - Add option to assign key to TitleCarouselState to retrieve values from state
+
+## 1.1.3
+
+- Add option to get the calculated luminance colour through getLuminanceColour method

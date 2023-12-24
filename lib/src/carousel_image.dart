@@ -41,7 +41,7 @@ class CarouselImage extends StatelessWidget {
 
   void setLuminance(double threshold) async {
     final tp =
-        TextPainter(text: generateText(), textDirection: TextDirection.ltr);
+        TextPainter(text: _generateText(), textDirection: TextDirection.ltr);
     tp.layout();
     Map<String, int> textArea = {
       "width": tp.width.ceil(),
@@ -68,7 +68,7 @@ class CarouselImage extends StatelessWidget {
             threshold);
   }
 
-  TextSpan generateText() {
+  TextSpan _generateText() {
     return TextSpan(
         text: titleOverlay!.text,
         style: TextStyle(
@@ -98,6 +98,9 @@ class CarouselImage extends StatelessWidget {
                   height: _childrenTextOverlay[index].height,
                 ))));
   }
+
+  Color getLuminanceColour() =>
+      _useLightColour ? titleOverlay!.brightColor : titleOverlay!.darkColor;
 
   List<TextProperties> getChildrenTextOverlay() => _childrenTextOverlay;
 
@@ -130,7 +133,7 @@ class CarouselImage extends StatelessWidget {
         Padding(
             padding: titleOverlay?.textPadding ?? EdgeInsets.zero,
             child:
-                Text.rich(textAlign: titleOverlay!.textAlign, generateText()))
+                Text.rich(textAlign: titleOverlay!.textAlign, _generateText()))
     ]);
   }
 }
