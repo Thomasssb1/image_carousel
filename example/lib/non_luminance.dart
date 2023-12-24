@@ -15,7 +15,7 @@ class _NonLuminanceState extends State<NonLuminance> {
     {
       "name": "Swan",
       "src": "https://source.unsplash.com/b027q9eF3Yo.jpeg",
-      "description": "\nAn elegant swan simming in the lake"
+      "description": "\nAn elegant swan simming in the lake",
     },
     {
       "name": "Robin",
@@ -46,6 +46,8 @@ class _NonLuminanceState extends State<NonLuminance> {
                   ],
                 )),
         threshold: 0.25,
+        animationCurve: Curves.bounceOut,
+        animation: CarouselAnimation.slide,
       ),
       Positioned(
           top: 0,

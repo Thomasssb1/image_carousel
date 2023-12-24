@@ -65,6 +65,7 @@ class _LuminanceState extends State<Luminance> {
                         description: [],
                       )),
               threshold: 0.25,
+              animation: CarouselAnimation.fade,
             )
           : const Center(child: CircularProgressIndicator()),
       Positioned(
