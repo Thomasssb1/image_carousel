@@ -55,7 +55,7 @@ class TitleCarousel extends StatefulWidget {
         super(key: key);
 
   @override
-  State<TitleCarousel> createState() => _TitleCarouselState(
+  State<TitleCarousel> createState() => TitleCarouselState(
       images: images,
       indicatorWidth: indicatorWidth!,
       duration: duration!,
@@ -67,7 +67,7 @@ class TitleCarousel extends StatefulWidget {
       indicatorPadding: indicatorPadding!);
 }
 
-class _TitleCarouselState extends State<TitleCarousel> {
+class TitleCarouselState extends State<TitleCarousel> {
   late List<CarouselImage> images;
   late double indicatorWidth;
   late Duration duration;
@@ -85,7 +85,7 @@ class _TitleCarouselState extends State<TitleCarousel> {
   bool _paused = false;
   List<_Indicator> _dots = [];
 
-  _TitleCarouselState(
+  TitleCarouselState(
       {required this.images,
       required this.indicatorWidth,
       required this.duration,
@@ -152,6 +152,8 @@ class _TitleCarouselState extends State<TitleCarousel> {
       }
     }
   }
+
+  CarouselImage getCurrentImage() => images[_currentImage];
 
   bool noReverse() =>
       animation == CarouselAnimation.slide ||
