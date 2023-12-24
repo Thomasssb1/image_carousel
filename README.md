@@ -56,8 +56,12 @@ CarouselImage(
 For each `TextProperties` object you can use luminance to influence the text colour used by setting `computeLuminance` to true. You can also customise the colours used by changing the `brightColor` and `darkColor` attributes.
 This class also contains the same attributes as a `Text` object - so you can customise the text however you like.<br><br>
 _Want to customise the indicator dots shown on the carousel?_<br>
-`TitleCarousel` takes the `dotDecoration` argument which allows for you to style the indicator however you like - you can even change the `selectedColor` to any color for when the current dot is active!\n\n
-Something to note though, is that because the colours you can pass is binary as it is based off luminosity - it may not always be as effective as using something like K-means to determine the most dominant colour but this will give you the best colour based on the brightness at that location.
+`TitleCarousel` takes the `dotDecoration` argument which allows for you to style the indicator however you like - you can even change the `selectedColor` to any color for when the current dot is active!<br><br>
+
+## Example
+You can view an example under the `examples/` directory, which is a flutter app showing the functionality of both non-luminous calculation and luminous calculation for text colour. The non-luminous example shows a set of pre-determined networked images whilst the luminous example will fetch random images from unsplash. To try the luminous example, you will need to add your unsplash `accessToken` to the variable inside of `examples/lib/luminance.dart`.
+
+Something to note, is that because the colours you can pass is binary as it is based off luminosity - it may not always be as effective as using something like K-means to determine the most dominant colour but this will give you the best colour based on the brightness at that location.
 
 <!--
 ## Additional information
