@@ -77,7 +77,9 @@ To get the currently displayed image of a `TitleCarousel` you can assign a key t
 
 ## Example
 
-You can view an example under the `examples/` directory, which is a flutter app showing the functionality of both non-luminous calculation and luminous calculation for text colour. The non-luminous example shows a set of pre-determined networked images whilst the luminous example will fetch random images from unsplash. To try the luminous example, you will need to add your unsplash `accessToken` to the variable inside of `examples/lib/luminance.dart`.
+You can view an example under the `examples/` directory, which is a flutter app showing the functionality of both non-luminous calculation and luminous calculation for text colour. The non-luminous example shows a set of pre-determined networked images whilst the luminous example will fetch random images from unsplash. To try the luminous example, you will need to add your unsplash `accessToken` to the variable inside of `examples/lib/luminance.dart`.<br>
+You can see more [here](https://github.com/Thomasssb1/title_carousel/blob/master/example/README.md).
+
 
 Something to note, is that because the colours you can pass is binary as it is based off luminosity - it may not always be as effective as using something like K-means to determine the most dominant colour but this will give you the best colour based on the brightness at that location.
 
